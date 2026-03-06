@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: smart_postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: smart_production
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - smart_network
+
+  backend:
+    build:
+      context: ./smart-production
+    container_name: smart_backend
+    ports:
+      - "3001:3001"
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: smart_production
+    depends_on:
+      - postgres
+    networks:
+      - smart_network
+
+  frontend:
+    build:
+      context: ./smart_production_dashboard
+    container_name: smart_frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    networks:
+      - smart_network
+
+volumes:
+  postgres_data:
+
+networks:
+  smart_network:
+    driver: bridge
