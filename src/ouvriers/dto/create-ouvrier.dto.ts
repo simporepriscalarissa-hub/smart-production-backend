@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty, IsOptional } from 'class-validator';
 
 export class CreateOuvrierDto {
   @IsString()
@@ -10,10 +10,14 @@ export class CreateOuvrierDto {
   prenom: string;
 
   @IsString()
-  @IsNotEmpty()
-  telephone: string;
+  @IsOptional()
+  telephone?: string;
 
   @IsString()
-  @IsNotEmpty()
-  rfid: string;
+  @IsOptional()
+  rfid?: string;
+
+  @IsString()
+  @IsOptional()
+  departement?: string;
 }
