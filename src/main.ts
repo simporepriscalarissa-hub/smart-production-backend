@@ -8,9 +8,9 @@ async function bootstrap() {
 
   // Activer CORS pour ton frontend Next.js
   app.enableCors({
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST', 'PATCH', 'DELETE'],
-    credentials: true,
+    origin: '*',
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    credentials: false,
   });
 
   // Activer la validation globale
