@@ -4,12 +4,14 @@ import { Repository } from 'typeorm';
 import { CreateOuvrierDto } from './dto/create-ouvrier.dto';
 import { UpdateOuvrierDto } from './dto/update-ouvrier.dto';
 import { Ouvrier } from './entities/ouvrier.entity';
+import { EventsGateway } from '../events/events.gateway';
 
 @Injectable()
 export class OuvriersService {
   constructor(
     @InjectRepository(Ouvrier)
     private ouvriersRepository: Repository<Ouvrier>,
+    private eventsGateway: EventsGateway,
   ) {}
 
   create(createOuvrierDto: CreateOuvrierDto) {
@@ -42,15 +44,24 @@ export class OuvriersService {
     return { message: `Ouvrier ${id} supprimé avec succès` };
   }
 
-  // Appelé quand l'ouvrier scanne son badge RFID
   async marquerPresence(rfid: string) {
     const ouvrier = await this.ouvriersRepository.findOne({ where: { rfid } });
     if (!ouvrier) return null;
     ouvrier.dernierePresence = new Date();
-    return this.ouvriersRepository.save(ouvrier);
+    const saved = await this.ouvriersRepository.save(ouvrier);
+
+    // Émettre en temps réel
+    this.eventsGateway.emitPresenceOuvrier({
+      id: saved.id,
+      nom: saved.nom,
+      prenom: saved.prenom,
+      departement: saved.departement,
+      dernierePresence: saved.dernierePresence,
+    });
+
+    return saved;
   }
 
-  // Vérifie si l'ouvrier est actif aujourd'hui
   estActifAujourdhui(ouvrier: Ouvrier): boolean {
     if (!ouvrier.dernierePresence) return false;
     const aujourd = new Date();
