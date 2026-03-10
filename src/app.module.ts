@@ -9,6 +9,7 @@ import { QualiteModule } from './qualite/qualite.module';
 import { AuthModule } from './auth/auth.module';
 import { OeeModule } from './oee/oee.module';
 import { DepartementsModule } from './departements/departements.module';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { DepartementsModule } from './departements/departements.module';
     AuthModule,
     OeeModule,
     DepartementsModule,
+    EventsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
