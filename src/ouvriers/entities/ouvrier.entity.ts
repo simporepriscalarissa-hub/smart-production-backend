@@ -19,4 +19,7 @@ export class Ouvrier {
 
   @Column({ nullable: true })
   departement: string;
+
+  @Column({ nullable: true, type: 'timestamp' })
+  dernierePresence: Date;
 }

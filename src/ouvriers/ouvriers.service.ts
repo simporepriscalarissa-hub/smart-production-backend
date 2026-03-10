@@ -23,6 +23,7 @@ export class OuvriersService {
     }
     return this.ouvriersRepository.find();
   }
+
   findOne(id: number) {
     return this.ouvriersRepository.findOne({ where: { id } });
   }
@@ -39,5 +40,25 @@ export class OuvriersService {
   async remove(id: number) {
     await this.ouvriersRepository.delete(id);
     return { message: `Ouvrier ${id} supprimé avec succès` };
+  }
+
+  // Appelé quand l'ouvrier scanne son badge RFID
+  async marquerPresence(rfid: string) {
+    const ouvrier = await this.ouvriersRepository.findOne({ where: { rfid } });
+    if (!ouvrier) return null;
+    ouvrier.dernierePresence = new Date();
+    return this.ouvriersRepository.save(ouvrier);
+  }
+
+  // Vérifie si l'ouvrier est actif aujourd'hui
+  estActifAujourdhui(ouvrier: Ouvrier): boolean {
+    if (!ouvrier.dernierePresence) return false;
+    const aujourd = new Date();
+    const presence = new Date(ouvrier.dernierePresence);
+    return (
+      presence.getDate() === aujourd.getDate() &&
+      presence.getMonth() === aujourd.getMonth() &&
+      presence.getFullYear() === aujourd.getFullYear()
+    );
   }
 }

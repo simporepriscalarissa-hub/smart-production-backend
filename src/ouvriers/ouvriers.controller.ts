@@ -31,6 +31,12 @@ export class OuvriersController {
     return this.ouvriersService.findByRfid(rfid);
   }
 
+  // Nouvelle route — scanne badge RFID → marque présence
+  @Post('presence/:rfid')
+  marquerPresence(@Param('rfid') rfid: string) {
+    return this.ouvriersService.marquerPresence(rfid);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.ouvriersService.findOne(+id);

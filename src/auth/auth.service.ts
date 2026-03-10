@@ -43,6 +43,10 @@ export class AuthService {
     const ouvrier = await this.ouvriersRepository.findOne({ where: { rfid } });
     if (!ouvrier) throw new UnauthorizedException('Badge non reconnu');
 
+    // ✅ Marquer la présence automatiquement au scan du badge
+    ouvrier.dernierePresence = new Date();
+    await this.ouvriersRepository.save(ouvrier);
+
     const payload = { sub: ouvrier.id, rfid: ouvrier.rfid, role: 'operateur' };
     return {
       access_token: this.jwtService.sign(payload),
